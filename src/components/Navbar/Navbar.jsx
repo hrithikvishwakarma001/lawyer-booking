@@ -1,12 +1,24 @@
 import React from "react";
-import {  Navbar, Text, Input } from "@nextui-org/react";
+import { Navbar, Text, Input } from "@nextui-org/react";
 import styles from "./Navbar.module.css";
 import { SearchIcon } from "../../icons";
-
+import { useDebounce } from "../../hook";
+import { useDispatch } from "react-redux";
+import { filterLawyers } from "../../redux/lawyersReducer/action";
 const Nav = () => {
+	const [search, setSearch] = React.useState("");
+	const dispatch = useDispatch();
+	const operation = (query) => {
+		dispatch(filterLawyers(query));
+	};
+	const debouncedSearchTerm = useDebounce(operation, 600);
+
+	React.useEffect(() => {
+		debouncedSearchTerm(search);
+	}, [search]);
 	return (
 		<Navbar
-		  className={styles.container}
+			className={styles.container}
 			isBordered
 			variant={"floating"}
 			style={{ marginBottom: "50px" }}>
@@ -17,6 +29,8 @@ const Nav = () => {
 			</Navbar.Brand>
 			<Navbar.Content>
 				<Input
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
 					clearable
 					contentLeft={
 						<SearchIcon
