@@ -25,6 +25,9 @@ export const lawyersReducer = (state = initialState, { type, payload }) => {
 				loading: false,
 				error: payload,
 			};
+		case Types.DATA_REORDER_DRAGG:
+			return { ...state, lawyers: payload };
+
 		default:
 			return state;
 	}

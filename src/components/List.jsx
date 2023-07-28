@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -18,9 +18,7 @@ import {
 } from "@mui/material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
-import { Button } from "@nextui-org/react";
-import { useDispatch } from "react-redux";
-import * as Types from "../redux/lawyersReducer/actionTypes";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
 		backgroundColor: theme.palette.common.black,
@@ -32,20 +30,13 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	"&:nth-of-type": {
+	"&:nth-of-type(odd)": {
 		backgroundColor: theme.palette.action.hover,
 	},
 	// hide last border
 	"&:last-child td, &:last-child th": {
 		border: 0,
 	},
-	"&:hover": {
-		backgroundColor: "rgba(120, 40, 200,0.1)",
-		cursor: "grab",
-	},
-	"flex-direction": "row",
-	"justify-content": "space-between",
-	"align-items": "center",
 }));
 
 function createData(name, calories, fat, carbs, protein) {
@@ -126,21 +117,10 @@ function TablePaginationActions(props) {
 	);
 }
 
-export default function LawyersList({ lawyersList }) {
-	const [isBookedIndexs, setIsBookedIndexs] = React.useState([]);
-
-	const columns = [
-		{ text: "Name" },
-		{ text: "Speciality" },
-		{ text: "Available Time" },
-		{ text: "Firms" },
-		{ text: "Phone Number" },
-		{ text: "Address" },
-		{ text: "Is Booked" },
-	];
-
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+export default function CustomizedTables() {
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [rows, setRows] = useState(initialRows);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -152,31 +132,16 @@ export default function LawyersList({ lawyersList }) {
 	};
 
 	const emptyRows =
-		rowsPerPage -
-		Math.min(rowsPerPage, lawyersList.length - page * rowsPerPage);
+		rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-	const dispatch = useDispatch();
+
 	const handleDragEnd = (result) => {
 		if (!result.destination) return;
-		const reorderedRows = Array.from(lawyersList);
+		const reorderedRows = Array.from(rows);
 		const [removed] = reorderedRows.splice(result.source.index, 1);
 		reorderedRows.splice(result.destination.index, 0, removed);
-		// setRows(reorderedRows);
-		dispatch({ type: Types.DATA_REORDER_DRAGG, payload: reorderedRows });
+		setRows(reorderedRows);
 	};
-
-	const handleBooking = (id) => {
-		console.log(id);
-	};
-
-	React.useEffect(() => {
-		if (lawyersList) {
-			const bookedIndexs = lawyersList
-				.map((item) => (item.isBooked ? item.id.toString() : null))
-				.filter((item) => item !== null);
-			setIsBookedIndexs(bookedIndexs);
-		}
-	}, [lawyersList]);
 
 	return (
 		<DragDropContext onDragEnd={handleDragEnd}>
@@ -191,15 +156,25 @@ export default function LawyersList({ lawyersList }) {
 							aria-label='customized table'>
 							<TableHead>
 								<TableRow>
-									{columns.map((column, index) => (
-										<StyledTableCell key={index}>
-											{column.text}
-										</StyledTableCell>
-									))}
+									<StyledTableCell>
+										Dessert (100g serving)
+									</StyledTableCell>
+									<StyledTableCell align='right'>
+										Calories
+									</StyledTableCell>
+									<StyledTableCell align='right'>
+										Fat&nbsp;(g)
+									</StyledTableCell>
+									<StyledTableCell align='right'>
+										Carbs&nbsp;(g)
+									</StyledTableCell>
+									<StyledTableCell align='right'>
+										Protein&nbsp;(g)
+									</StyledTableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{lawyersList
+								{rows
 									.slice(
 										page * rowsPerPage,
 										page * rowsPerPage + rowsPerPage
@@ -219,37 +194,17 @@ export default function LawyersList({ lawyersList }) {
 														scope='row'>
 														{row.name}
 													</StyledTableCell>
-													<StyledTableCell align='left'>
-														{row.speciality}
+													<StyledTableCell align='right'>
+														{row.calories}
 													</StyledTableCell>
-													<StyledTableCell align='left'>
-														{row.availableTime}
+													<StyledTableCell align='right'>
+														{row.fat}
 													</StyledTableCell>
-													<StyledTableCell align='left'>
-														{row.firms}
+													<StyledTableCell align='right'>
+														{row.carbs}
 													</StyledTableCell>
-													<StyledTableCell align='left'>
-														{row.phoneNumber}
-													</StyledTableCell>
-													<StyledTableCell align='left'>
-														{row.address}
-													</StyledTableCell>
-													<StyledTableCell>
-														{row.isBooked ? (
-															<Button
-																shadow
-																disabled
-																auto>
-																Not Available
-															</Button>
-														) : (
-															<Button
-																shadow
-																color='secondary'
-																auto>
-																Available
-															</Button>
-														)}
+													<StyledTableCell align='right'>
+														{row.protein}
 													</StyledTableCell>
 												</StyledTableRow>
 											)}
@@ -272,7 +227,7 @@ export default function LawyersList({ lawyersList }) {
 											{ label: "All", value: -1 },
 										]}
 										colSpan={5}
-										count={lawyersList.length}
+										count={rows.length}
 										rowsPerPage={rowsPerPage}
 										page={page}
 										SelectProps={{
