@@ -1,16 +1,18 @@
 import React from "react";
-
-import { tableCellClasses } from "@mui/material/TableCell";
-import { TableRow, TableCell } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { Draggable } from "react-beautiful-dnd";
 import { Button } from "@nextui-org/react";
 import { StyledTableCell, StyledTableRow } from "../constants";
+import { EditLawyerBookingStatus } from "../redux/lawyersReducer/action";
+import * as RR from "react-redux";
 
 const DraggableRow = ({ row, index }) => {
+	const { lawyers } = RR.useSelector((store) => store.lawyers);
+	const dispatch = RR.useDispatch();
+
 	const handleBooking = (id) => {
-		console.log(id);
+		dispatch(EditLawyerBookingStatus(id, lawyers));
 	};
+
 	return (
 		<Draggable key={row.name} draggableId={row.name} index={index}>
 			{(provided) => (
