@@ -22,12 +22,16 @@ const Nav = () => {
 			isBordered
 			variant={"floating"}
 			style={{ marginBottom: "50px" }}>
-			<Navbar.Brand>
-				<Text b size={"$2xl"} color='inherit' hideIn='xs'>
+			<Navbar.Brand hideIn='xs'>
+				<Text b size={"$2xl"} color='inherit'>
 					Lawyers
 				</Text>
 			</Navbar.Brand>
-			<Navbar.Content>
+			<Navbar.Content
+				css={{
+					w: "100%",
+					mw: "300px",
+				}}>
 				<Input
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}

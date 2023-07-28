@@ -12,7 +12,7 @@ import {
 	Paper,
 } from "@mui/material";
 
-import { DragDropContext,  Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch } from "react-redux";
 import * as Types from "../redux/lawyersReducer/actionTypes";
 import DraggableRow from "./DraggableRow";
@@ -56,7 +56,6 @@ export default function LawyersList({ lawyersList }) {
 		dispatch({ type: Types.DATA_REORDER_DRAGG, payload: reorderedRows });
 	};
 
-
 	return (
 		<DragDropContext onDragEnd={handleDragEnd}>
 			<Droppable droppableId='table'>
@@ -66,9 +65,11 @@ export default function LawyersList({ lawyersList }) {
 						ref={provided.innerRef}
 						{...provided.droppableProps}>
 						<Table
-							sx={{ minWidth: 700 }}
+							sx={{
+								minWidth: 700,
+							}}
 							aria-label='customized table'>
-							<TableHead>
+							<TableHead style={{ height: "50px"}}>
 								<TableRow>
 									{columns.map((column, index) => (
 										<StyledTableCell key={index}>
@@ -89,11 +90,11 @@ export default function LawyersList({ lawyersList }) {
 								{provided.placeholder}
 							</TableBody>
 							{emptyRows > 0 && (
-								<TableRow style={{ height: 53 * emptyRows }}>
+								<TableRow style={{ height: 60 * emptyRows }}>
 									<TableCell colSpan={5} />
 								</TableRow>
 							)}
-							<TableFooter>
+							<TableFooter style={{ height: "20px" }}>
 								<TableRow>
 									<TablePagination
 										rowsPerPageOptions={[
